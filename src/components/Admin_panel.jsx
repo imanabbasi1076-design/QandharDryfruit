@@ -1,12 +1,12 @@
 import Admin_navbar from "./Admin_navbar";
-import Admin_main from "./Admin_main";
+import View from "./View";
 import Footer from "./Footer";
 function Admin_panel() {
     return(
         <>
         <div>
         <Admin_navbar/>
-        <Admin_main/>
+        <View/>
         <Footer/>
         </div>
         </>

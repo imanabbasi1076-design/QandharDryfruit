@@ -1,78 +1,78 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useContext}from "react";
+import {AuthContext} from './AuthContext';
 function Admin_navbar() {
+  const navigate = useNavigate();
+  const {logout}=useContext(AuthContext);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
+        <Link className="navbar-brand fw-bold" to="/admin">
           Qandhar Dryfruit Exchange
-        </a>
+        </Link>
+
         <button
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
+          data-bs-target="#adminNavbar"
+          aria-controls="adminNavbar"
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <div className="collapse navbar-collapse" id="adminNavbar">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">
+              <Link className="nav-link" to="/admin">
                 Dashboard
-              </a>
-            </li>
-          
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                Orders
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                Users Req
-              </a>
+              <Link className="nav-link" to="/orders">
+                User Requests
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                Add
-              </a>
+              <Link className="nav-link" to="/add">
+                Add Product
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                Delete
-              </a>
+              <Link className="nav-link" to="/update">
+                Update Product
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                Update
-              </a>
+              <Link className="nav-link" to="/delete">
+                Delete Product
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-            View
-              </a>
+              <Link className="nav-link" to="/view">
+                View Products
+              </Link>
             </li>
           </ul>
-          <form className="d-flex" role="search">
-            <input
-              className="form-control "
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <button className="btn btn-outline-success " type="submit">
-              Search
-            </button>
 
-            <button className="btn btn-outline-danger ms-2" type="button">
-              Logout
-            </button>
-          </form>
+          <button
+            className="btn btn-outline-danger ms-2"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         </div>
       </div>
     </nav>
   );
 }
+
 export default Admin_navbar;

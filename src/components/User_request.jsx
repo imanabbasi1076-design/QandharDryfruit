@@ -1,92 +1,137 @@
+import { useState } from "react";
+import Admin_navbar from "./Admin_navbar";
+
 function User_request() {
+  const [orders, setOrders] = useState([
+    {
+      id: 1,
+      name: "Ali Raza",
+      product: "Almonds",
+      quantity: "2 kg",
+      price: "Rs. 10,000",
+      email: "ali@gmail.com",
+      status: "Pending",
+    },
+    {
+      id: 2,
+      name: "Sara Khan",
+      product: "Ajwa Dates",
+      quantity: "1 kg",
+      price: "Rs. 7,000",
+      email: "sara@gmail.com",
+      status: "Accepted",
+    },
+    {
+      id: 3,
+      name: "Usman Ahmed",
+      product: "Chilghoza",
+      quantity: "500 g",
+      price: "Rs. 9,000",
+      email: "usman@gmail.com",
+      status: "Cancelled",
+    },
+    {
+      id: 4,
+      name: "Fatima Noor",
+      product: "Walnuts",
+      quantity: "3 kg",
+      price: "Rs. 18,000",
+      email: "fatima@gmail.com",
+      status: "Pending",
+    },
+    {
+      id: 5,
+      name: "Hassan Mir",
+      product: "Apricot",
+      quantity: "1 kg",
+      price: "Rs. 3,000",
+      email: "hassan@gmail.com",
+      status: "Accepted",
+    },
+  ]);
+
+  const handleAccept = (id) => {
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.id === id ? { ...order, status: "Accepted" } : order,
+      ),
+    );
+  };
+
+  const handleCancel = (id) => {
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.id === id ? { ...order, status: "Cancelled" } : order,
+      ),
+    );
+  };
+
   return (
-   
+    <div>
+      <Admin_navbar />
       <div className="container mt-4">
         <h5>Client Orders</h5>
-        <p className="text-muted">Total 5 requests</p>
-
-        <table className="table table-bordered">
-          <thead className="table-dark">
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Client Name</th>
-              <th scope="col">Product</th>
-              <th scope="col">Quantity</th>
-              <th scope="col">Total Price</th>
-              <th scope="col">Email</th>
-              <th scope="col">Status</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Ali Raza</td>
-              <td>Almonds</td>
-              <td>2 kg</td>
-              <td>Rs. 10,000</td>
-              <td>ali@gmail.com</td>
-              <td><span className="badge bg-warning text-dark">Pending</span></td>
-              <td>
-                <button className="btn btn-success btn-sm me-1">Accept</button>
-                <button className="btn btn-danger btn-sm">Cancel</button>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Sara Khan</td>
-              <td>Ajwa Dates</td>
-              <td>1 kg</td>
-              <td>Rs. 7,000</td>
-              <td>sara@gmail.com</td>
-              <td><span className="badge bg-success">Accepted</span></td>
-              <td>
-                <button className="btn btn-success btn-sm me-1">Accept</button>
-                <button className="btn btn-danger btn-sm">Cancel</button>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>Usman Ahmed</td>
-              <td>Chilghoza</td>
-              <td>500 g</td>
-              <td>Rs. 9,000</td>
-              <td>usman@gmail.com</td>
-              <td><span className="badge bg-danger">Cancelled</span></td>
-              <td>
-                <button className="btn btn-success btn-sm me-1">Accept</button>
-                <button className="btn btn-danger btn-sm">Cancel</button>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">4</th>
-              <td>Fatima Noor</td>
-              <td>Walnuts</td>
-              <td>3 kg</td>
-              <td>Rs. 18,000</td>
-              <td>fatima@gmail.com</td>
-              <td><span className="badge bg-warning text-dark">Pending</span></td>
-              <td>
-                <button className="btn btn-success btn-sm me-1">Accept</button>
-                <button className="btn btn-danger btn-sm">Cancel</button>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">5</th>
-              <td>Hassan Mir</td>
-              <td>Apricot</td>
-              <td>1 kg</td>
-              <td>Rs. 3,000</td>
-              <td>hassan@gmail.com</td>
-              <td><span className="badge bg-success">Accepted</span></td>
-              <td>
-                <button className="btn btn-success btn-sm me-1">Accept</button>
-                <button className="btn btn-danger btn-sm">Cancel</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <p className="text-muted">Total {orders.length} requests</p>
+        <div className="table-responsive">
+          <table className="table table-bordered">
+            <thead className="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Client Name</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{order.name}</td>
+                  <td>{order.product}</td>
+                  <td>{order.quantity}</td>
+                  <td>{order.price}</td>
+                  <td>{order.email}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        order.status === "Pending"
+                          ? "bg-warning text-dark"
+                          : order.status === "Accepted"
+                            ? "bg-success"
+                            : "bg-danger"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-success btn-sm me-1"
+                      onClick={() => handleAccept(order.id)}
+                      disabled={order.status === "Accepted"}
+                    >
+                      Accept
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleCancel(order.id)}
+                      disabled={order.status === "Cancelled"}
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    );
+    </div>
+  );
 }
+
 export default User_request;
