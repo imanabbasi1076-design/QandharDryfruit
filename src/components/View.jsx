@@ -1,26 +1,30 @@
-import { Link } from "react-router-dom";
-import {useContext} from 'react';
-import {ProductContext} from './ProductContext';
-import {useEffect} from 'react';
+import { useState } from "react";
+import { GetProducts } from "../serviceApi";
+import Admin_navbar from "./Admin_navbar";
+
 function View() {
-  
-  const {products}=useContext(ProductContext);
-  
-  useEffect(() => {
-    console.log("Products updated! Total products:", products.length);
-  }, [products]);
-  
+  const [products, setProducts] = useState([]);
+
+  const ShowProducts = async () => {
+    const result = await GetProducts();
+    setProducts(result);
+  };
+
   return (
     <div className="container mt-4">
       <h5>All Products</h5>
       <p className="text-muted">List of all available products</p>
+      <button className="btn btn-primary mb-3" onClick={ShowProducts}>
+        View Products
+      </button>
       <table className="table table-bordered">
         <thead className="table-dark">
           <tr>
-            <th>id</th>
+            <th>ID</th>
             <th>Product Name</th>
+            <th>Category</th>
             <th>Price</th>
-          
+            <th>Weight</th>
           </tr>
         </thead>
         <tbody>
@@ -28,8 +32,9 @@ function View() {
             <tr key={product.id}>
               <td>{product.id}</td>
               <td>{product.productName}</td>
+              <td>{product.category}</td>
               <td>{product.price}</td>
-             
+              <td>{product.weight}</td>
             </tr>
           ))}
         </tbody>
@@ -37,4 +42,5 @@ function View() {
     </div>
   );
 }
+
 export default View;

@@ -1,27 +1,28 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
 import { Link } from "react-router-dom";
-import {  useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-function Cart() {
-  const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
-    const navigate = useNavigate(); 
- useEffect(() => {
-      if (cartItems.length === 0) {
-        const timer = setTimeout(() => {
-          navigate("/shopping");
-        }, 3000);
 
-        return () => clearTimeout(timer);
-      }
-    }, [cartItems]);
+function Cart() {
+  const [serverMessage, setServerMessage] = useState("");
+  const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      const timer = setTimeout(() => {
+        navigate("/shopping");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [cartItems]);
+
   return (
     <div>
       <Navbar />
 
-      {/* Header */}
       <div
         className="py-4 text-white text-center"
         style={{ backgroundColor: "#002147" }}
@@ -41,7 +42,6 @@ function Cart() {
           </div>
         ) : (
           <>
-            {/* Cart Items Table */}
             <div className="table-responsive">
               <table className="table table-bordered align-middle">
                 <thead className="table-dark">
@@ -88,14 +88,18 @@ function Cart() {
                 </tbody>
               </table>
             </div>
-
-            {/* Buttons */}
             <div className="d-flex justify-content-between mt-4">
-              <Link to="/shopping" className="btn btn-outline-secondary">
+            <Link to="/shopping" className="btn btn-outline-secondary">
                 ← Continue Shopping
               </Link>
               <button className="btn btn-danger" onClick={clearCart}>
                 Clear Cart
+              </button>
+              <button
+                className="btn btn-success"
+                onClick={() => navigate("/checkout")}
+              >
+                Place Order
               </button>
             </div>
           </>

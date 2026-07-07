@@ -1,71 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Admin_navbar from "./Admin_navbar";
+import { GetOrders } from "../serviceApi";
+import { UpdateOrderStatus } from "../serviceApi";
 
 function User_request() {
-  const [orders, setOrders] = useState([
-    {
-      id: 1,
-      name: "Ali Raza",
-      product: "Almonds",
-      quantity: "2 kg",
-      price: "Rs. 10,000",
-      email: "ali@gmail.com",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      name: "Sara Khan",
-      product: "Ajwa Dates",
-      quantity: "1 kg",
-      price: "Rs. 7,000",
-      email: "sara@gmail.com",
-      status: "Accepted",
-    },
-    {
-      id: 3,
-      name: "Usman Ahmed",
-      product: "Chilghoza",
-      quantity: "500 g",
-      price: "Rs. 9,000",
-      email: "usman@gmail.com",
-      status: "Cancelled",
-    },
-    {
-      id: 4,
-      name: "Fatima Noor",
-      product: "Walnuts",
-      quantity: "3 kg",
-      price: "Rs. 18,000",
-      email: "fatima@gmail.com",
-      status: "Pending",
-    },
-    {
-      id: 5,
-      name: "Hassan Mir",
-      product: "Apricot",
-      quantity: "1 kg",
-      price: "Rs. 3,000",
-      email: "hassan@gmail.com",
-      status: "Accepted",
-    },
-  ]);
+  const [orders, setOrders] = useState([]);
 
-  const handleAccept = (id) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, status: "Accepted" } : order,
-      ),
-    );
-  };
+  useEffect(() => {
+    const loadOrders = async () => {
+      const result = await GetOrders();
+      setOrders(result);
+    };
+    loadOrders();
+  }, []);
 
-  const handleCancel = (id) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, status: "Cancelled" } : order,
-      ),
-    );
-  };
+  // const handleAccept = (id) => {
+  //   setOrders((prev) =>
+  //     prev.map((order) =>
+  //       order.Id === id ? { ...order, Status: "Confirmed" } : order,
+  //     ),
+  //   );
+  // };
 
+  // const handleCancel = (id) => {
+  //   setOrders((prev) =>
+  //     prev.map((order) =>
+  //       order.Id === id ? { ...order, Status: "Cancelled" } : order,
+  //     ),
+  //   );
+  // };
+const handleAccept = async (id) => {
+  const result = await UpdateOrderStatus(id, "Confirmed");
+  setOrders((prev) =>
+    prev.map((order) =>
+      order.Id === id ? { ...order, Status: "Confirmed" } : order,
+    ),
+  );
+};
+
+const handleCancel = async (id) => {
+  const result = await UpdateOrderStatus(id, "Cancelled");
+  setOrders((prev) =>
+    prev.map((order) =>
+      order.Id === id ? { ...order, Status: "Cancelled" } : order,
+    ),
+  );
+};
   return (
     <div>
       <Admin_navbar />
@@ -88,38 +68,38 @@ function User_request() {
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>{order.name}</td>
-                  <td>{order.product}</td>
+                <tr key={order.Id}>
+                  <td>{order.Id}</td>
+                  <td>{order.FullName}</td>
+                  <td>{order.productName}</td>
                   <td>{order.quantity}</td>
                   <td>{order.price}</td>
-                  <td>{order.email}</td>
+                  <td>{order.Email}</td>
                   <td>
                     <span
                       className={`badge ${
-                        order.status === "Pending"
+                        order.Status === "Order placed"
                           ? "bg-warning text-dark"
-                          : order.status === "Accepted"
+                          : order.Status === "Confirmed"
                             ? "bg-success"
                             : "bg-danger"
                       }`}
                     >
-                      {order.status}
+                      {order.Status}
                     </span>
                   </td>
                   <td>
                     <button
                       className="btn btn-success btn-sm me-1"
-                      onClick={() => handleAccept(order.id)}
-                      disabled={order.status === "Accepted"}
+                      onClick={() => handleAccept(order.Id)}
+                      disabled={order.Status === "Confirmed"}
                     >
                       Accept
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
-                      onClick={() => handleCancel(order.id)}
-                      disabled={order.status === "Cancelled"}
+                      onClick={() => handleCancel(order.Id)}
+                      disabled={order.Status === "Cancelled"}
                     >
                       Cancel
                     </button>

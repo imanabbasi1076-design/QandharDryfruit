@@ -12,6 +12,8 @@ import About from "./components/About";
 import Shopping from "./components/Shopping";
 import Protectedroute from "./components/Protectedroute";
 import Cart from "./components/Cart";
+import Checkout from "./components/Checkout";
+
 
 
 const router = createBrowserRouter([
@@ -27,7 +29,9 @@ const router = createBrowserRouter([
   { path: "/update", element: <Protectedroute><Update_product /></Protectedroute> },
   { path: "/view", element:<Protectedroute><View /></Protectedroute> },
   { path: "/orders", element: <Protectedroute><User_request /></Protectedroute> },
-  { path: "/cart", element: <Cart /> }
+  { path: "/cart", element: <Cart /> },
+  { path: "/checkout", element: <Checkout /> },
+  
 ]);
 
 export default router;

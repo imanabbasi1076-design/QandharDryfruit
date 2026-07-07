@@ -2,30 +2,47 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {useContext} from 'react';
-import {AuthContext} from './AuthContext';
-
+import { useContext, useState } from "react";
+import { AuthContext } from "./AuthContext";
+import { LoginAccount } from "../serviceApi";
 
 function Login() {
-    const schema = z.object({ 
-        email: z.string().email({ message: "Invalid email address" }),
-        password: z.string().min(6, { message: "Password must be at least 6 characters long" })
-      });
+  const { login } = useContext(AuthContext);
+  const [serverMessage, setServerMessage] = useState("");
   const navigate = useNavigate();
-  const {login}=useContext(AuthContext);
-  const { register, handleSubmit, formState: { errors, isValid } } = useForm({ resolver: zodResolver(schema) });
 
-  function submit(data) {
-    console.log(data);
-   
-    if (data.email === "admin@gmail.com" && data.password === "admin123") {
-      login();
-      navigate("/admin");
-    } else {
-      console.log("Invalid credentials");
-      
+  const schema = z.object({
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters long" }),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  const submit = async (data) => {
+    try {
+      const result = await LoginAccount(data.email, data.password);
+      if (result.success) {
+        if (result.role === "admin") {
+          login();
+          navigate("/admin");
+        } else if (result.role === "user") {
+          navigate("/shopping");
+        }
+      } else {
+        setServerMessage(result.message);
+      }
+    } catch (error) {
+      setServerMessage("A server error 500 occurred.");
     }
-  }
+  };
 
   return (
     <div className="container mt-5">
@@ -56,7 +73,7 @@ function Login() {
                       className="form-control"
                       placeholder="Enter your email"
                       id="email"
-                        {...register("email")}
+                      {...register("email")}
                     />
                     {errors.email && (
                       <p className="text-danger">{errors.email.message}</p>
@@ -74,7 +91,7 @@ function Login() {
                       className="form-control"
                       id="password"
                       placeholder="Enter your password"
-                        {...register("password")}
+                      {...register("password")}
                     />
                     {errors.password && (
                       <p className="text-danger">{errors.password.message}</p>
@@ -103,6 +120,11 @@ function Login() {
                   No account? <Link to="/register">Sign up</Link>
                 </p>
               </form>
+              {serverMessage && (
+                <p className="text-danger">
+                  <strong>{serverMessage}</strong>
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -3,12 +3,16 @@ import { useForm } from "react-hook-form";
 import Admin_navbar from "./Admin_navbar";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import{useContext} from 'react';
-import {ProductContext} from './ProductContext';
+// import{useContext} from 'react';
+// import {ProductContext} from './ProductContext';
+import { useState } from "react";
+import { UpdateProduct } from "../serviceApi";
 
 function Update_product() {
-  const{updateproduct}=useContext(ProductContext);
+  // const{updateproduct}=useContext(ProductContext);
+  const [serverMessage, setServerMessage] = useState("");
   const schema = z.object({
+    id: z.string().min(1, {message: "ID is required"}),
     productName: z
       .string()
       .min(2, { message: "Product name must be at least 2 characters long" })
@@ -29,12 +33,12 @@ function Update_product() {
       .string()
       .min(10, { message: "Description must be at least 10 characters long" })
       .max(200),
-    image: z
-      .any()
-      .refine(
-        (files) => files && files.length > 0 && files[0] instanceof File,
-        { message: "Please select a valid image file" },
-      ),
+    // image: z
+    //   .any()
+    //   .refine(
+    //     (files) => files && files.length > 0 && files[0] instanceof File,
+    //     { message: "Please select a valid image file" },
+    //   ),
   });
 
   const navigate = useNavigate();
@@ -45,15 +49,23 @@ function Update_product() {
   } = useForm({
     resolver: zodResolver(schema),
   });
+  const submit = async (data) => {
+    try {
+      const result = await UpdateProduct(data.id, data);
+      setServerMessage(result.message);
+    } catch (error) {
+      setServerMessage("A server error 500 occurred.");
+    }
+  };
 
- function submit(data) {
-   const updatedProduct = {
-     ...data,
-     image: URL.createObjectURL(data.image[0]),
-   };
-   updateproduct(data.productName, updatedProduct);
-   navigate("/view");
- }
+//  function submit(data) {
+//    const updatedProduct = {
+//      ...data,
+//     //  image: URL.createObjectURL(data.image[0]),
+//    };
+//    updateproduct(data.productName, updatedProduct);
+//    navigate("/view");
+//  }
 
   return (
     <div>
@@ -64,7 +76,18 @@ function Update_product() {
             <div className="card p-4" style={{ border: "1px solid black" }}>
               <form className="row g-3" onSubmit={handleSubmit(submit)}>
                 <h4 className="mb-0">Update Product</h4>
-
+                <div className="col-md-12">
+                  <label className="form-label">Product ID</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter product ID"
+                    {...register("id")}
+                  />
+                  {errors.id && (
+                    <p className="text-danger">{errors.id.message}</p>
+                  )}
+                </div>
                 <div className="col-md-12">
                   <label className="form-label">Product Name</label>
                   <input
@@ -131,7 +154,7 @@ function Update_product() {
                   )}
                 </div>
 
-                <div className="col-12">
+                {/* <div className="col-12">
                   <label className="form-label">Product Image</label>
                   <input
                     className="form-control"
@@ -142,7 +165,7 @@ function Update_product() {
                   {errors.image && (
                     <p className="text-danger">{errors.image.message}</p>
                   )}
-                </div>
+                </div> */}
 
                 <div className="col-6">
                   <button type="submit" className="btn btn-primary w-100">
@@ -159,6 +182,11 @@ function Update_product() {
                   </button>
                 </div>
               </form>
+              {serverMessage && (
+                <p>
+                  <strong>{serverMessage}</strong>
+                </p>
+              )}
             </div>
           </div>
         </div>

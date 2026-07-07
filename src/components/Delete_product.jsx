@@ -1,27 +1,35 @@
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Admin_navbar from "./Admin_navbar";
-import {z} from "zod";
+import { z} from "zod";
 import { zodResolver} from "@hookform/resolvers/zod";
-import {useContext} from 'react';
-import{ProductContext} from "./ProductContext";
+// import {useContext} from 'react';
+// import{ProductContext} from "./ProductContext";
+import {useState }from "react";
+import { DeleteProduct } from "../serviceApi";
+
 
 
 function Delete_product() {
-  const {deleteproduct}=useContext(ProductContext);
+  // const {deleteproduct}=useContext(ProductContext);
+  const [servermessage, setServerMessage] = useState("");
   const schema=z.object({ 
-    productname:z.string().min(2,{message:"Product name must be at least 2 characters long"}).max(30  ,{message:"Product name must be at most 30 characters long"})
+    id:z.string().min(1,{message:"ID is required"})
 
   });
   const navigate = useNavigate();
   const { register, handleSubmit ,formState:{errors,isValid},} = useForm({resolver:zodResolver(schema)});
 
 
-  function submit(data) {
-    console.log("Delete:", data);
-    deleteproduct(data.productname);
-    navigate("/view");
-  }
+  const submit = async (data) => {
+    try{
+        const result=await DeleteProduct(data.id);
+        setServerMessage(result.message);
+    }
+    catch(error) {
+      setServerMessage("An server error 500 occurred");
+    }
+  };
 
   return (
     <div>
@@ -33,19 +41,21 @@ function Delete_product() {
               <form className="row g-3" onSubmit={handleSubmit(submit)}>
                 <h4 className="mb-0">Delete Product</h4>
                 <p className="text-muted small mb-0">
-                  Enter the product name to permanently delete it.
+                  Enter the product ID to permanently delete it.
                 </p>
 
                 <div className="col-md-12">
-                  <label htmlFor="productname" className="form-label">Product Name</label>
+                  <label htmlFor="id" className="form-label">
+                    Product ID
+                  </label>
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Enter product name"
-                    id="productname"
-                    {...register("productname")}
+                    placeholder="Enter product ID"
+                    id="id"
+                    {...register("id")}
                   />
-                  {errors.productname && <p> {errors.productname.message}</p>}
+                  {errors.id && <p> {errors.id.message}</p>}
                 </div>
 
                 <div className="col-6">
@@ -63,6 +73,11 @@ function Delete_product() {
                   </button>
                 </div>
               </form>
+              {servermessage && (
+                <p>
+                  <strong>{servermessage}</strong>
+                </p>
+              )}
             </div>
           </div>
         </div>
